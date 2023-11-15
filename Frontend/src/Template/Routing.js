@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import Mahasiswa from "../pages/mahasiswa";
+import Menu from "../pages/Menu";
 import Pelanggan from "../pages/Pelanggan";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
@@ -35,8 +35,8 @@ function Routing() {
             <div className="collapse navbar-collapse" id="navbarNav">
               <ul className="navbar-nav">
                 <li className="nav-item">
-                  <Link className="nav-link active" to="/mhs">
-                    Mahasiswa
+                  <Link className="nav-link active" to="/menu">
+                    Menu
                   </Link>
                 </li>
                 <li className="nav-item">
@@ -63,7 +63,7 @@ function Routing() {
         </nav>
 
         <Routes>
-          <Route path="/mhs" element={<Mahasiswa />} />
+          <Route path="/menu" element={<Menu />} />
           <Route path="/pelanggan" element={<Pelanggan />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
