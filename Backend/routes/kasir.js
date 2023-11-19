@@ -20,7 +20,7 @@ router.get('/', function (req, res){
             })
         }
     })
-});
+}); 
 
 router.post('/store', [
     body('nama').notEmpty(),
@@ -118,7 +118,7 @@ router.delete('/delete/(:id)', function(req, res){
                 message: 'Server Error',
             })
         }else{
-            return res.status(500).json({
+            return res.status(200).json({
                 status: true,
                 message: 'Data berhasil di hapus!',
             })

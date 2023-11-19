@@ -8,10 +8,11 @@ app.use(cors())
 const bodyPs = require('body-parser');
 app.use(bodyPs.urlencoded({ extended: false}));
 app.use(bodyPs.json());
+app.use('/static', express.static("public"));
 
 app.get('/', (req, res) => {
     res.send("Halo Shera!")
-});
+}); 
 
 const pelangganRouter = require('./routes/pelanggan');
 app.use('/api/pelanggan', pelangganRouter);
