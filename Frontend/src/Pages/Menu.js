@@ -15,7 +15,7 @@ function Menu() {
   const [validation, setValidation] = useState({});
   const navigate = useNavigate();
 
-  const url = "http://localhost:3000/static/";
+  const url = "http://localhost:2000/static/";
 
   useEffect(() => {
     fetchData();
@@ -63,23 +63,20 @@ function Menu() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-
-    formData.append("nama", nama);
-    formData.append("harga", harga);
-    formData.append("gambar", gambar);
+    const formData = {
+      nama: nama,
+      harga: harga,
+      gambar: gambar
+    }
 
     try {
       const headers = {
         Authorization: `Bearer ${token}`,
       };
-      await axios.post("http://localhost:3000/api/menu/store", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
+      await axios.post("http://localhost:2000/api/menu/store", formData, {
+        headers,
       });
-      navigate("/mhs");
+      navigate("/menu");
       fetchData();
     } catch (error) {
       console.error("Kesalahan: ", error);
@@ -122,27 +119,26 @@ function Menu() {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-
-    formData.append("id_m", editData.id_m);
-    formData.append("nama", editData.nama);
-    formData.append("harga", editData.harga);
+    const formData = {
+      nama: nama,
+      harga: harga,
+      gambar: gambar
+    }
 
     if (editData.gambar) {
       formData.append("gambar", editData.gambar);
     }
     try {
       await axios.patch(
-        `http://localhost:3000/api/menu/update/${editData.id_m}`,
+        `http://localhost:2000/api/menu/update/${editData.id_m}`,
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      navigate("/mhs");
+      navigate("/menu");
       fetchData();
       setShowEditModal(false);
     } catch (error) {
@@ -153,7 +149,7 @@ function Menu() {
 
   const handleDelete = (id_m) => {
     axios
-      .delete(`http://localhost:3000/api/menu/delete/${id_m}`, {
+      .delete(`http://localhost:2000/api/menu/delete/${id_m}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
@@ -179,9 +175,9 @@ function Menu() {
             Tambah
           </Button>
         </Col>
-        <table className="table">
+        <table className="table table-striped">
           <thead>
-            <tr>
+            <tr class="table-secondary">
               <th scope="col">No</th>
               <th scope="col">Nama</th>
               <th scope="col">Harga</th>
@@ -300,40 +296,13 @@ function Menu() {
               />
             </div>
             <div className="mb-3">
-              <label className="form-label">Jurusan:</label>
-              <select
-                className="form-select"
-                value={editData.id_jurusan}
-                onChange={(e) =>
-                  handleEditDataChange("id_jurusan", e.target.value)
-                }
-              >
-                {menu.map((jr) => (
-                  <option key={jr.id_j} value={jr.id_j}>
-                    {jr.nama_jurusan}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="mb-3">
               <label className="form-label">Gambar:</label>
               <input
                 type="file"
                 className="form-control"
-                accept="image/*"
+                accept="public/*"
                 onChange={(e) =>
                   handleEditDataChange("gambar", e.target.files[0])
-                }
-              />
-            </div>
-            <div className="mb-3">
-              <label className="form-label">Swa Foto:</label>
-              <input
-                type="file"
-                className="form-control"
-                accept="image/*"
-                onChange={(e) =>
-                  handleEditDataChange("swa_foto", e.target.files[0])
                 }
               />
             </div>

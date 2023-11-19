@@ -3,6 +3,7 @@ import Menu from "../pages/Menu";
 import Pelanggan from "../pages/Pelanggan";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
+import Kasir from "../pages/Kasir";
 
 function Routing() {
   const token = localStorage.getItem("token");
@@ -44,6 +45,11 @@ function Routing() {
                     Pelanggan
                   </Link>
                 </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/kasir">
+                    kasir
+                  </Link>
+                </li>
                 {isLoggedIn ? (
                   <li className="nav-item">
                     <Link className="nav-link" onClick={handleLogout}>
@@ -67,6 +73,7 @@ function Routing() {
           <Route path="/pelanggan" element={<Pelanggan />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/kasir" element={<Kasir/>} />
         </Routes>
       </div>
     </Router>

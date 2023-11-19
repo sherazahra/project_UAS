@@ -5,17 +5,16 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 const token = localStorage.getItem("token");
 
-function Pelanggan() {
-  const [pelanggan, setPelanggan] = useState([]);
+function Kasir() {
+  const [kasir, setKasir] = useState([]);
   const [menu, setMenu] = useState([]);
   const [show, setShow] = useState(false);
   const [nama, setNama] = useState("");
-  const [alamat, setAlamat] = useState("");
-  const [no_hp, setNohp] = useState("");
+  const [jeniskelamin, setJeniskelamin] = useState("");
   const [validation, setValidation] = useState({});
   const navigate = useNavigate();
 
-  const url = "http://localhost:3000/static/";
+  const url = "http://localhost:2000/static/";
 
   useEffect(() => {
     fetchData();
@@ -26,12 +25,12 @@ function Pelanggan() {
       const headers = {
         Authorization: `Bearer ${token}`,
       };
-      const response1 = await axios.get("http://localhost:2000/api/pelanggan", {
+      const response1 = await axios.get("http://localhost:2000/api/kasir", {
         headers,
       });
       const data1 = await response1.data.data;
-      setPelanggan(data1);
-      const response2 = await axios.get("http://localhost:2000/api/pelanggan", {
+      setKasir(data1);
+      const response2 = await axios.get("http://localhost:2000/api/kasir", {
         headers,
       });
       const data2 = await response2.data.data;
@@ -52,34 +51,27 @@ function Pelanggan() {
     setNama(e.target.value);
   };
 
-  const handlealamatChange = (e) => {
-    setAlamat(e.target.value);
+  const handlejeniskelaminChange = (e) => {
+    setJeniskelamin(e.target.value);
   };
 
-  const handleno_hpChange = (e) => {
-    setNohp(e.target.value);
-  };
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-
-    formData.append("nama", nama);
-    formData.append("alamat", alamat);
-    formData.append("no_hp", no_hp);
+    const formData = {
+      nama: nama,
+      jenis_kelamin: jeniskelamin
+    }
 
     try {
       const headers = {
         Authorization: `Bearer ${token}`,
       };
-      await axios.post("http://localhost:3000/api/pelanggan/store", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
+      await axios.post("http://localhost:2000/api/kasir/store", formData, {
+        headers,
       });
-      navigate("/pelanggan");
+      navigate("/kasir");
       fetchData();
     } catch (error) {
       console.error("Kesalahan: ", error);
@@ -91,8 +83,7 @@ function Pelanggan() {
   const [editData, setEditData] = useState({
     id: null,
     nama: "",
-    alamat: "",
-    no_hp: ""
+    jenis_kelamin: "",
   });
 
   const [showEditModal, setShowEditModal] = useState(false);
@@ -108,8 +99,7 @@ function Pelanggan() {
     setEditData({
       id: null,
       nama: "",
-      alamat: "",
-      no_hp: ""
+      jenis_kelamin: "",
     }); // Reset the input values of the Edit Modal
   };
 
@@ -122,25 +112,22 @@ function Pelanggan() {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-
-    formData.append("id_pelanggan", editData.id_pelanggan);
-    formData.append("nama", editData.nama);
-    formData.append("alamat", editData.alamat);
-    formData.append("no_hp", editData.alamat);
+    const formData = {
+      nama : editData.nama,
+      jenis_kelamin: editData.jenis_kelamin
+    }
 
     try {
       await axios.patch(
-        `http://localhost:3000/api/pelanggan/update/${editData.id_pelanggan}`,
+        `http://localhost:2000/api/kasir/update/${editData.id_kasir}`,
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      navigate("/pelanggan");
+      navigate("/kasir");
       fetchData();
       setShowEditModal(false);
     } catch (error) {
@@ -149,24 +136,23 @@ function Pelanggan() {
     }
   };
 
-  const handleDelete = (id_pelanggan) => {
-    axios
-      .delete(`http://localhost:3000/api/pelanggan/delete/${id_pelanggan}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((response) => {
-        console.log("Data berhasil dihapus");
-        // Hapus item dari array data pelanggan
-        const updatedpelanggan = pelanggan.filter((item) => item.id_pelanggan !== id_pelanggan);
-        setPelanggan(updatedpelanggan); // Perbarui state dengan data yang sudah diperbarui
-        alert("Berhasil menghapus data! ");
-      })
-      .catch((error) => {
-        console.error("Gagal menghapus data:", error);
-        alert(
-          "Gagal menghapus data. Silakan coba lagi atau hubungi administrator. "
-        );
-      });
+  const handleDelete = async (id_kasir) => {
+    try { 
+      await axios
+        .delete(`http://localhost:2000/api/kasir/delete/${id_kasir}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+          console.log("Data berhasil dihapus");
+          // Hapus item dari array data kasir
+          const updatedkasir = kasir.filter((item) => item.id_kasir !== id_kasir);
+          setKasir(updatedkasir); // Perbarui state dengan data yang sudah diperbarui
+          alert("Berhasil menghapus data! ");
+    } catch (error) {
+          console.error("Gagal menghapus data:", error);
+          alert(
+            "Gagal menghapus data. Silakan coba lagi atau hubungi administrator. "
+          );
+    }
   };
   return (
     <Container>
@@ -182,20 +168,18 @@ function Pelanggan() {
             <tr class="table-secondary">
               <th scope="col">No</th>
               <th scope="col">Nama</th>
-              <th scope="col">alamat</th>
-              <th scope="col">no_hp</th>
+              <th scope="col">jeniskelamin</th>
               <th scope="col" colspan={2}>
                 Action
               </th>
             </tr>
           </thead>
           <tbody>
-            {pelanggan.map((mh, index) => (
+            {kasir.map((mh, index) => (
               <tr key={mh.id}>
                 <td>{index + 1}</td>
                 <td>{mh.nama}</td>
-                <td>{mh.alamat}</td>
-                <td>{mh.no_hp}</td>
+                <td>{mh.jenis_kelamin}</td>
                 <td>
                   <button
                     onClick={() => handleShowEditModal(mh)}
@@ -206,7 +190,7 @@ function Pelanggan() {
                 </td>
                 <td>
                   <button
-                    onClick={() => handleDelete(mh.id_pelanggan)}
+                    onClick={() => handleDelete(mh.id_kasir)}
                     className="btn btn-sm btn-danger"
                   >
                     Hapus
@@ -239,21 +223,12 @@ function Pelanggan() {
             </div>
 
             <div className="mb-3">
-              <label className="form-label">alamat:</label>
+              <label className="form-label">jeniskelamin:</label>
               <input
                 type="text"
                 className="form-control"
-                value={alamat}
-                onChange={handlealamatChange}
-              />
-            </div>
-            <div className="mb-3">
-              <label className="form-label">no_hp:</label>
-              <input
-                type="text"
-                className="form-control"
-                value={no_hp}
-                onChange={handleno_hpChange}
+                value={jeniskelamin}
+                onChange={handlejeniskelaminChange}
               />
             </div>
             <button
@@ -283,50 +258,12 @@ function Pelanggan() {
               />
             </div>
             <div className="mb-3">
-              <label className="form-label">alamat:</label>
+              <label className="form-label">jenis kelamin:</label>
               <input
                 type="text"
                 className="form-control"
-                value={editData.alamat}
-                onChange={(e) => handleEditDataChange("alamat", e.target.value)}
-              />
-            </div>
-            <div className="mb-3">
-              <label className="form-label">Jurusan:</label>
-              <select
-                className="form-select"
-                value={editData.id_jurusan}
-                onChange={(e) =>
-                  handleEditDataChange("id_jurusan", e.target.value)
-                }
-              >
-                {menu.map((jr) => (
-                  <option key={jr.id_j} value={jr.id_j}>
-                    {jr.nama_jurusan}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="mb-3">
-              <label className="form-label">Gambar:</label>
-              <input
-                type="file"
-                className="form-control"
-                accept="image/*"
-                onChange={(e) =>
-                  handleEditDataChange("gambar", e.target.files[0])
-                }
-              />
-            </div>
-            <div className="mb-3">
-              <label className="form-label">Swa Foto:</label>
-              <input
-                type="file"
-                className="form-control"
-                accept="image/*"
-                onChange={(e) =>
-                  handleEditDataChange("swa_foto", e.target.files[0])
-                }
+                value={editData.jenis_kelamin}
+                onChange={(e) => handleEditDataChange("jenis_kelamin", e.target.value)}
               />
             </div>
             <button type="submit" className="btn btn-primary">
@@ -339,4 +276,4 @@ function Pelanggan() {
   );
 }
 
-export default Pelanggan;
+export default Kasir;
