@@ -15,7 +15,7 @@ function Pelanggan() {
   const [validation, setValidation] = useState({});
   const navigate = useNavigate();
 
-  const url = "http://localhost:3000/static/";
+  const url = "http://localhost:2000/static/";
 
   useEffect(() => {
     fetchData();
@@ -63,21 +63,18 @@ function Pelanggan() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-
-    formData.append("nama", nama);
-    formData.append("alamat", alamat);
-    formData.append("no_hp", no_hp);
+    const formData = {
+      nama : nama,
+      alamat: alamat,
+      no_hp: no_hp
+    }
 
     try {
       const headers = {
         Authorization: `Bearer ${token}`,
       };
-      await axios.post("http://localhost:3000/api/pelanggan/store", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
+      await axios.post("http://localhost:2000/api/pelanggan/store", formData, {
+        headers,
       });
       navigate("/pelanggan");
       fetchData();
@@ -122,20 +119,18 @@ function Pelanggan() {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-
-    formData.append("id_pelanggan", editData.id_pelanggan);
-    formData.append("nama", editData.nama);
-    formData.append("alamat", editData.alamat);
-    formData.append("no_hp", editData.alamat);
+    const formData = {
+      nama : editData.nama,
+      alamat: editData.alamat,
+      no_hp: editData.no_hp
+    }
 
     try {
       await axios.patch(
-        `http://localhost:3000/api/pelanggan/update/${editData.id_pelanggan}`,
+        `http://localhost:2000/api/pelanggan/update/${editData.id_pelanggan}`,
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
         }
@@ -149,24 +144,23 @@ function Pelanggan() {
     }
   };
 
-  const handleDelete = (id_pelanggan) => {
-    axios
-      .delete(`http://localhost:3000/api/pelanggan/delete/${id_pelanggan}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((response) => {
-        console.log("Data berhasil dihapus");
-        // Hapus item dari array data pelanggan
-        const updatedpelanggan = pelanggan.filter((item) => item.id_pelanggan !== id_pelanggan);
-        setPelanggan(updatedpelanggan); // Perbarui state dengan data yang sudah diperbarui
-        alert("Berhasil menghapus data! ");
-      })
-      .catch((error) => {
-        console.error("Gagal menghapus data:", error);
-        alert(
-          "Gagal menghapus data. Silakan coba lagi atau hubungi administrator. "
-        );
-      });
+  const handleDelete = async (id_pelanggan) => {
+    try { 
+      await axios
+        .delete(`http://localhost:2000/api/pelanggan/delete/${id_pelanggan}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+          console.log("Data berhasil dihapus");
+          // Hapus item dari array data pelanggan
+          const updatedpelanggan = pelanggan.filter((item) => item.id_pelanggan !== id_pelanggan);
+          setPelanggan(updatedpelanggan); // Perbarui state dengan data yang sudah diperbarui
+          alert("Berhasil menghapus data! ");
+    } catch (error) {
+          console.error("Gagal menghapus data:", error);
+          alert(
+            "Gagal menghapus data. Silakan coba lagi atau hubungi administrator. "
+          );
+    }
   };
   return (
     <Container>
@@ -292,41 +286,12 @@ function Pelanggan() {
               />
             </div>
             <div className="mb-3">
-              <label className="form-label">Jurusan:</label>
-              <select
-                className="form-select"
-                value={editData.id_jurusan}
-                onChange={(e) =>
-                  handleEditDataChange("id_jurusan", e.target.value)
-                }
-              >
-                {menu.map((jr) => (
-                  <option key={jr.id_j} value={jr.id_j}>
-                    {jr.nama_jurusan}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="mb-3">
-              <label className="form-label">Gambar:</label>
+              <label className="form-label">no_hp:</label>
               <input
-                type="file"
+                type="text"
                 className="form-control"
-                accept="image/*"
-                onChange={(e) =>
-                  handleEditDataChange("gambar", e.target.files[0])
-                }
-              />
-            </div>
-            <div className="mb-3">
-              <label className="form-label">Swa Foto:</label>
-              <input
-                type="file"
-                className="form-control"
-                accept="image/*"
-                onChange={(e) =>
-                  handleEditDataChange("swa_foto", e.target.files[0])
-                }
+                value={editData.no_hp}
+                onChange={(e) => handleEditDataChange("no_hp", e.target.value)}
               />
             </div>
             <button type="submit" className="btn btn-primary">
