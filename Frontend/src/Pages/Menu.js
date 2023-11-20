@@ -3,9 +3,9 @@ import { Container, Row, Col, Table, Button, Modal } from "react-bootstrap";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
-const token = localStorage.getItem("token");
 
 function Menu() {
+  const token = localStorage.getItem("token");
   const [mhs, setMhs] = useState([]);
   const [menu, setMenu] = useState([]);
   const [show, setShow] = useState(false);
@@ -26,12 +26,7 @@ function Menu() {
       const headers = {
         Authorization: `Bearer ${token}`,
       };
-      const response1 = await axios.get("http://localhost:2000/api/menu", {
-        headers,
-      });
-      const data1 = await response1.data.data;
-      setMhs(data1);
-      const response2 = await axios.get("http://localhost:2000/api/pelanggan", {
+      const response2 = await axios.get("http://localhost:2000/api/menu", {
         headers,
       });
       const data2 = await response2.data.data;
@@ -70,11 +65,14 @@ function Menu() {
     }
 
     try {
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
+      // const headers = {
+      //   Authorization: `Bearer ${token}`,
+      // };
       await axios.post("http://localhost:2000/api/menu/store", formData, {
-        headers,
+        headers: {
+          'Content-Type': ' multipart/form-data',
+          'Authorization': `Bearer ${token}`
+        }
       });
       navigate("/menu");
       fetchData();
@@ -86,10 +84,10 @@ function Menu() {
 
   // Start Edit
   const [editData, setEditData] = useState({
-    id: null,
+    id_menu: null,
     nama: "",
     harga: "",
-    gambar: null,
+    gambar: "",
   });
 
   const [showEditModal, setShowEditModal] = useState(false);
@@ -103,7 +101,7 @@ function Menu() {
   const handleCloseEditModal = () => {
     setShowEditModal(false); // Close the Edit Modal
     setEditData({
-      id: null,
+      id_menu: null,
       nama: "",
       harga: "",
       gambar: null,
@@ -119,22 +117,19 @@ function Menu() {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    const formData = {
-      nama: nama,
-      harga: harga,
-      gambar: gambar
-    }
 
-    if (editData.gambar) {
-      formData.append("gambar", editData.gambar);
+    const formData = {
+      nama : editData.nama,
+      harga: editData.harga,
+      gambar: editData.gambar
     }
     try {
       await axios.patch(
-        `http://localhost:2000/api/menu/update/${editData.id_m}`,
+        `http://localhost:2000/api/menu/update/${editData.id_menu}`,
         formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            'Content-Type': ' multipart/form-data',
           },
         }
       );
@@ -158,6 +153,7 @@ function Menu() {
         const updatedMhs = mhs.filter((item) => item.id_m !== id_m);
         setMhs(updatedMhs); // Perbarui state dengan data yang sudah diperbarui
         alert("Berhasil menghapus data! ");
+        fetchData();
       })
       .catch((error) => {
         console.error("Gagal menghapus data:", error);
@@ -188,7 +184,7 @@ function Menu() {
             </tr>
           </thead>
           <tbody>
-            {mhs.map((mh, index) => (
+            {menu.map((mh, index) => (
               <tr key={mh.id}>
                 <td>{index + 1}</td>
                 <td>{mh.nama}</td>
@@ -210,7 +206,7 @@ function Menu() {
                 </td>
                 <td>
                   <button
-                    onClick={() => handleDelete(mh.id_m)}
+                    onClick={() => handleDelete(mh.id_menu)}
                     className="btn btn-sm btn-danger"
                   >
                     Hapus
@@ -256,7 +252,7 @@ function Menu() {
               <input
                 type="file"
                 className="form-control"
-                accept="image/*"
+                accept="public/"
                 onChange={handleGambarChange}
               />
             </div>
@@ -282,8 +278,8 @@ function Menu() {
               <input
                 type="text"
                 className="form-control"
-                value={editData.nama}
-                onChange={(e) => handleEditDataChange("nama", e.target.value)}
+                value={editData ? editData.nama : ''}
+                onChange={(e) => handleEditDataChange('nama', e.target.value)}
               />
             </div>
             <div className="mb-3">

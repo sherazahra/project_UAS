@@ -30,7 +30,7 @@ const upload = multer({storage: storage, fileFilter: fileFilter})
 
 const authenticateToken = require('../routes/auth/midleware/authenticateToken')
 
-router.get('/', authenticateToken, function (req, res){
+router.get('/',  function (req, res){
     connection.query('select * from menu order by id_menu desc', function(err, rows){
         if(err){
             return res.status(500).json({
@@ -48,7 +48,7 @@ router.get('/', authenticateToken, function (req, res){
     })
 });
 
-router.post('/store', authenticateToken, upload.fields([{name: 'gambar', maxCount: 1}]), [
+router.post('/store',  upload.fields([{name: 'gambar', maxCount: 1}]), [
     body('nama').notEmpty(),
     body('harga').notEmpty(),   
 ], (req, res) => {
@@ -105,7 +105,7 @@ router.get('/(:id)', function (req, res) {
     })
 })
 
-router.patch('/update/(:id)',authenticateToken, upload.fields([{ name: 'gambar', maxCount: 1 }]), [
+router.patch('/update/(:id)', upload.fields([{ name: 'gambar', maxCount: 1 }]), [
     body('nama').notEmpty(),
     body('harga').notEmpty(), 
 ], (req,res) => {
@@ -151,7 +151,7 @@ router.patch('/update/(:id)',authenticateToken, upload.fields([{ name: 'gambar',
         if(err){
             return res.status(500).json({
                 status: false,
-                message: 'Server Error',
+                message: 'Server Error  ',
                 error: err  
             })
         }else {
@@ -164,16 +164,16 @@ router.patch('/update/(:id)',authenticateToken, upload.fields([{ name: 'gambar',
 })
 })
 
-router.delete("/delete/(:id)",authenticateToken, function (req, res) {
+router.delete("/delete/(:id)", function (req, res) {
     let id = req.params.id;
   
     connection.query(
-      `select * from menu where id_menu = ${id}`,
+      `select * from menu where id_menu=${id}`,
       function (err, rows) {
         if (err) {
           return res.status(500).json({
             status: false,
-            message: "server error",
+            message: "err",
           });
         }
         if (rows.length === 0) {
