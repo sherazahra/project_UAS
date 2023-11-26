@@ -4,7 +4,9 @@ const {body, validationResult } = require('express-validator');
 
 const connection = require('../config/db.js');
 
-router.get('/', function (req, res){
+const authenticateToken = require('../routes/auth/midleware/authenticateToken')
+
+router.get('/', authenticateToken,function (req, res){
     connection.query('select * from kasir order by id_kasir desc',
      function(err, rows){
         if(err){
@@ -22,7 +24,7 @@ router.get('/', function (req, res){
     })
 }); 
 
-router.post('/store', [
+router.post('/store', authenticateToken,[
     body('nama').notEmpty(),
     body('jenis_kelamin').notEmpty()
 
@@ -79,7 +81,7 @@ router.get('/(:id)', function (req, res) {
     })
 })
 
-router.patch('/update/(:id)', [
+router.patch('/update/(:id)', authenticateToken,[
     body('nama').notEmpty(),
     body('jenis_kelamin').notEmpty()   
 ], (req,res) => {
@@ -109,7 +111,7 @@ router.patch('/update/(:id)', [
     })
 })
 
-router.delete('/delete/(:id)', function(req, res){
+router.delete('/delete/(:id)', authenticateToken,function(req, res){
     let id = req.params.id;
     connection.query(`delete from kasir where id_kasir = ${id}`, function (err, rows) {
         if(err){

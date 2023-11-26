@@ -30,7 +30,7 @@ const upload = multer({storage: storage, fileFilter: fileFilter})
 
 const authenticateToken = require('../routes/auth/midleware/authenticateToken')
 
-router.get('/',  function (req, res){
+router.get('/',function (req, res){
     connection.query('select * from menu order by id_menu desc', function(err, rows){
         if(err){
             return res.status(500).json({
@@ -48,7 +48,7 @@ router.get('/',  function (req, res){
     })
 });
 
-router.post('/store',  upload.fields([{name: 'gambar', maxCount: 1}]), [
+router.post('/store',  authenticateToken,upload.fields([{name: 'gambar', maxCount: 1}]), [
     body('nama').notEmpty(),
     body('harga').notEmpty(),   
 ], (req, res) => {
@@ -105,7 +105,7 @@ router.get('/(:id)', function (req, res) {
     })
 })
 
-router.patch('/update/(:id)', upload.fields([{ name: 'gambar', maxCount: 1 }]), [
+router.patch('/update/(:id)', authenticateToken,upload.fields([{ name: 'gambar', maxCount: 1 }]), [
     body('nama').notEmpty(),
     body('harga').notEmpty(), 
 ], (req,res) => {
@@ -164,7 +164,7 @@ router.patch('/update/(:id)', upload.fields([{ name: 'gambar', maxCount: 1 }]), 
 })
 })
 
-router.delete("/delete/(:id)", function (req, res) {
+router.delete("/delete/(:id)", authenticateToken,function (req, res) {
     let id = req.params.id;
   
     connection.query(
